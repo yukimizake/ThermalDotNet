@@ -21,7 +21,11 @@ namespace ThermalDotNet
 		/// Delay between two text lines. (in ms)
 		/// </summary>
 		public int WriteLineSleepTimeMs = 0;
+		/// <summary>
+		/// Current encoding used by the printer.
+		/// </summary>
 		public string Encoding		{ get; private set; }
+		
 
 		public ThermalPrinter(SerialPort serialPort, byte maxPrintingDots, byte heatingTime, byte heatingInterval)
 		{
@@ -30,23 +34,17 @@ namespace ThermalDotNet
 		
 		public ThermalPrinter(SerialPort serialPort)
 		{
-			_constructor(serialPort,7,80,2);
+			_constructor(serialPort,_maxPrintingDots,_heatingTime,_heatingInterval);
 		}
 		
 		private void _constructor(SerialPort serialPort, byte maxPrintingDots, byte heatingTime, byte heatingInterval)
 		{
 			this.Encoding = "ibm850";
 			
-			if (maxPrintingDots > 0) {
-				_maxPrintingDots = maxPrintingDots;
-			}
-			if (heatingTime > 0) {
-				_heatingTime = heatingTime;
-			}
-			if (_heatingInterval > 0) {
-				_heatingInterval = heatingInterval;
-			}
-			
+			_maxPrintingDots = maxPrintingDots;
+			_heatingTime = heatingTime;
+			_heatingInterval = heatingInterval;
+
 			_serialPort = serialPort;
 			Reset();
 			SetPrintingParameters(maxPrintingDots,heatingTime,heatingInterval);
@@ -65,8 +63,9 @@ namespace ThermalDotNet
 			_writeByte(10);
 			System.Threading.Thread.Sleep(WriteLineSleepTimeMs);
 		}
+		
 		/// <summary>
-		/// Writes the text to the printer buffer. Does not print until a line feed (0x10) is sent.
+		/// Sends the text to the printer buffer. Does not print until a line feed (0x10) is sent.
 		/// </summary>
 		/// <param name='text'>
 		/// Text to print.
@@ -79,6 +78,12 @@ namespace ThermalDotNet
 			_serialPort.Write(outputBytes,0,outputBytes.Length);
 		}
 		
+		/// <summary>
+		/// Prints the line of text, white on black.
+		/// </summary>
+		/// <param name='text'>
+		/// Text to print.
+		/// </param>
 		public void WriteLine_Invert(string text)
 		{
 			//Sets inversion on
@@ -97,6 +102,12 @@ namespace ThermalDotNet
 			LineFeed();
 		}
 		
+		/// <summary>
+		/// Prints the line of text, double size.
+		/// </summary>
+		/// <param name='text'>
+		/// Text to print.
+		/// </param>
 		public void WriteLine_Big(string text)
 		{
 			const byte DoubleHeight = 1 << 4;
@@ -118,7 +129,7 @@ namespace ThermalDotNet
 		}
 	
 		/// <summary>
-		/// Writes the text to the printer buffer. Does not print until a line feed (0x10) is sent.
+		/// Prints the line of text.
 		/// </summary>
 		/// <param name='text'>
 		/// Text to print.
@@ -132,14 +143,14 @@ namespace ThermalDotNet
 		}
 		
 		/// <summary>
-		/// Writes the text to the printer buffer. Does not print until a line feed (0x10) is sent.
+		/// Prints the line of text.
 		/// </summary>
 		/// <param name='text'>
 		/// Text to print.
 		/// </param>
 		/// <param name='style'>
 		/// Style of the text. Can be the sum of PrintingStyle enums.
-		/// </param> 		
+		/// </param>
 		public void WriteLine(string text, byte style)
 		{
 			//style on
@@ -156,6 +167,12 @@ namespace ThermalDotNet
 			_writeByte(0);
 		}
 		
+		/// <summary>
+		/// Prints the line of text in bold.
+		/// </summary>
+		/// <param name='text'>
+		/// Text to print.
+		/// </param>
 		public void WriteLine_Bold(string text)
 		{
 			//bold on
@@ -170,6 +187,9 @@ namespace ThermalDotNet
 			LineFeed();
 		}
 		
+		/// <summary>
+		/// Sets bold mode on.
+		/// </summary>
 		public void BoldOn()
 		{
 			_writeByte(27);
@@ -180,6 +200,9 @@ namespace ThermalDotNet
 			_writeByte(1);
 		}
 		
+		/// <summary>
+		/// Sets bold mode off.
+		/// </summary>
 		public void BoldOff()
 		{
 			_writeByte(27);
@@ -190,6 +213,35 @@ namespace ThermalDotNet
 			_writeByte(0);
 		}
 		
+		/// <summary>
+		/// Sets white on black mode on.
+		/// </summary>
+		public void WhiteOnBlackOn()
+		{
+			_writeByte(29);
+			_writeByte(66);
+			_writeByte(1);
+		}
+		
+		/// <summary>
+		/// Sets white on black mode off.
+		/// </summary>
+		public void WhiteOnBlackOff()
+		{
+			_writeByte(29);
+			_writeByte(66);
+			_writeByte(0);
+		}
+		
+		/// <summary>
+		/// Sets the text size.
+		/// </summary>
+		/// <param name='doubleWidth'>
+		/// Double width
+		/// </param>
+		/// <param name='doubleHeight'>
+		/// Double height
+		/// </param>
 		public void SetSize(bool doubleWidth, bool doubleHeight)
 		{
 			int sizeValue = (Convert.ToInt32(doubleWidth))*(0xF0) + (Convert.ToInt32(doubleHeight))*(0x0F);
@@ -198,11 +250,20 @@ namespace ThermalDotNet
 			_writeByte((byte)sizeValue);
 		}
 		
+		///	<summary>
+		/// Prints the contents of the buffer and feeds one line.
+		/// </summary>
 		public void LineFeed()
 		{
 			_writeByte(10);
 		}
 		
+		/// <summary>
+		/// Prints the contents of the buffer and feeds n lines.
+		/// </summary>
+		/// <param name='lines'>
+		/// Number of lines to feed.
+		/// </param>
 		public void LineFeed(byte lines)
 		{
 			_writeByte(27);
@@ -210,6 +271,12 @@ namespace ThermalDotNet
 			_writeByte(lines);
 		}
 		
+		/// <summary>
+		/// Idents the text.
+		/// </summary>
+		/// <param name='columns'>
+		/// Number of columns.
+		/// </param>
 		public void Ident(byte columns)
 		{
 			if (columns < 0 || columns > 31) {
@@ -234,6 +301,9 @@ namespace ThermalDotNet
 			_writeByte(lineSpacing);
 		}
 		
+		/// <summary>
+		/// Aligns the text to the left.
+		/// </summary>
 		public void SetAlignLeft()
 		{
 			_writeByte(27);
@@ -241,6 +311,9 @@ namespace ThermalDotNet
 			_writeByte(0);
 		}
 		
+		/// <summary>
+		/// Centers the text.
+		/// </summary>		
 		public void SetAlignCenter()
 		{
 			_writeByte(27);
@@ -248,6 +321,9 @@ namespace ThermalDotNet
 			_writeByte(1);
 		}
 		
+		/// <summary>
+		/// Aligns the text to the right.
+		/// </summary>
 		public void SetAlignRight()
 		{
 			_writeByte(27);
@@ -255,6 +331,12 @@ namespace ThermalDotNet
 			_writeByte(2);
 		}
 		
+		/// <summary>
+		/// Prints a horizontal line.
+		/// </summary>
+		/// <param name='length'>
+		/// Line length (in characters).
+		/// </param>
 		public void HorizontalLine(int length)
 		{
 			if (length > 0) {
@@ -269,6 +351,9 @@ namespace ThermalDotNet
 			}
 		}
 		
+		/// <summary>
+		/// Resets the printer.
+		/// </summary>
 		public void Reset()
 		{
 			_writeByte(27);
@@ -408,7 +493,7 @@ namespace ThermalDotNet
 			}
 		}
 		
-		public void SetLargeBarcode(bool large)
+		public void SetBarcodeSize(bool large)
 		{
 			if (large) {
 				_writeByte(29);
@@ -502,20 +587,6 @@ namespace ThermalDotNet
 			_writeByte(maxPrintingDots);
 			_writeByte(heatingTime);				
 			_writeByte(heatingInterval);
-		}
-		
-		public void WhiteOnBlackOn()
-		{
-			_writeByte(29);
-			_writeByte(66);
-			_writeByte(1);
-		}
-		
-		public void WhiteOnBlackOff()
-		{
-			_writeByte(29);
-			_writeByte(66);
-			_writeByte(00);
 		}
 		
 		/// <summary>
