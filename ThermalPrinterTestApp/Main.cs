@@ -15,7 +15,8 @@ namespace ThermalPrinterTestApp
 			printer.SetLineSpacing(0);			
 			printer.SetAlignCenter();
 			printer.WriteLine("MY SHOP",
-				(byte)ThermalPrinter.PrintingStyle.DoubleHeight + (byte)ThermalPrinter.PrintingStyle.DoubleWidth);
+				(byte)ThermalPrinter.PrintingStyle.DoubleHeight
+				+(byte)ThermalPrinter.PrintingStyle.DoubleWidth);
 			printer.WriteLine("My address, CITY");
 			printer.LineFeed();		
 			printer.LineFeed();

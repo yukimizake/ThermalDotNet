@@ -74,7 +74,8 @@ namespace ThermalDotNet
 		{
 			text = text.Trim('\n').Trim('\r');
 			byte[] originalBytes = System.Text.Encoding.UTF8.GetBytes(text);
-			byte[] outputBytes = System.Text.Encoding.Convert(System.Text.Encoding.UTF8,System.Text.Encoding.GetEncoding(this.Encoding),originalBytes);
+			byte[] outputBytes = System.Text.Encoding.Convert(System.Text.Encoding.UTF8,
+				System.Text.Encoding.GetEncoding(this.Encoding),originalBytes);
 			_serialPort.Write(outputBytes,0,outputBytes.Length);
 		}
 		
