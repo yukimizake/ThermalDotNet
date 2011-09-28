@@ -1,0 +1,18 @@
+ThermalDotNet is a lightweight .Net library for ESC/POS thermal printers.
+
+It requires Mono 2.10 or .Net 3.5. I only tested it with Mono, but it should work with .Net.
+
+Features:
+
+* Simple text and standard text styles supported. (Bold, double size, reverse printing...)
+* Barcodes support
+* Image printing support (must be 384px wide)
+* Printer configuration support (heating time, speed, etc.)
+
+To do:
+
+* Underline support
+* Custom characters support
+* International encodings support
+* Barcode text location & barcode height support
+* Printing density support

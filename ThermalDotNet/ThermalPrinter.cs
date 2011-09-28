@@ -16,7 +16,7 @@ namespace ThermalDotNet
 		/// <summary>
 		/// Delay between two picture lines. (in ms)
 		/// </summary>
-		public int PictureLineSleepTimeMs = 20;
+		public int PictureLineSleepTimeMs = 40;
 		/// <summary>
 		/// Delay between two text lines. (in ms)
 		/// </summary>
@@ -494,7 +494,7 @@ namespace ThermalDotNet
 			}
 		}
 		
-		public void SetBarcodeSize(bool large)
+		public void SetLargeBarcode(bool large)
 		{
 			if (large) {
 				_writeByte(29);

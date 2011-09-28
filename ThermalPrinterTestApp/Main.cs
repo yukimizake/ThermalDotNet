@@ -69,7 +69,7 @@ namespace ThermalPrinterTestApp
 			ThermalPrinter.BarcodeType myType = ThermalPrinter.BarcodeType.ean13;
 			string myData = "3350030103392";
 			printer.WriteLine(myType.ToString() + ", data: " + myData);
-			printer.SetBarcodeSize(true);
+			printer.SetLargeBarcode(true);
 			printer.LineFeed();
 			printer.PrintBarcode(myType,myData);
 			printer.SetLargeBarcode(false);
@@ -133,10 +133,11 @@ namespace ThermalPrinterTestApp
 			printer.WriteLine("PrintingStyle.DoubleWidth",ThermalPrinter.PrintingStyle.DoubleWidth);
 			printer.WriteLine("PrintingStyle.Reverse",ThermalPrinter.PrintingStyle.Reverse);
 			printer.WriteLine("PrintingStyle.Updown",ThermalPrinter.PrintingStyle.Updown);
-			printer.WriteLine("READ ME!",((byte)ThermalPrinter.PrintingStyle.Bold +
+			printer.WriteLine("BIG TEXT!",((byte)ThermalPrinter.PrintingStyle.Bold +
 				(byte)ThermalPrinter.PrintingStyle.DoubleHeight +
 				(byte)ThermalPrinter.PrintingStyle.DoubleWidth));
 			
+			printer.LineFeed();
 			printer.Sleep();
 			Console.WriteLine("Printer is now offline.");
 			printerPort.Close();
