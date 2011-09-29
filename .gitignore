@@ -19,8 +19,6 @@ ThermalDotNet/bin/Debug/ThermalDotNet.dll.mdb
 
 ThermalDotNet/bin/Debug/ThermalDotNet.dll
 
-ThermalPrinterTestApp/bin/Release/ThermalPrinterTestApp.exe
-
 ThermalPrinterTestApp/bin/Release/ThermalDotNet.dll
 
-ThermalDotNet/bin/Release/ThermalDotNet.dll
+ThermalPrinterTestApp/bin/Release/ThermalPrinterTestApp.exe
