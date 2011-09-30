@@ -6,6 +6,10 @@ using System.Text;
 
 namespace ThermalDotNet
 {
+	/// <summary>
+	/// ESP/POS serial thermal printer library.
+	/// https://github.com/yukimizake/ThermalDotNet
+	/// </summary>
 	public class ThermalPrinter
 	{	
 		private SerialPort _serialPort;
@@ -26,12 +30,32 @@ namespace ThermalDotNet
 		/// </summary>
 		public string Encoding		{ get; private set; }
 		
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ThermalDotNet.ThermalPrinter"/> class.
+		/// </summary>
+		/// <param name='serialPort'>
+		/// Serial port used by printer.
+		/// </param>
+		/// <param name='maxPrintingDots'>
+		/// Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 (beceause (7+1)*8 = 64 dots)
+		/// </param>
+		/// <param name='heatingTime'>
+		/// Heating time (3-255), unit: 10µs, default: 80 (800µs)
+		/// </param>
+		/// <param name='heatingInterval'>
+		/// Heating interval (0-255), unit: 10µs, default: 2 (20µs)
+		/// </param>
 		public ThermalPrinter(SerialPort serialPort, byte maxPrintingDots, byte heatingTime, byte heatingInterval)
 		{
 			_constructor(serialPort,maxPrintingDots,heatingTime,heatingInterval);
 		}
 		
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ThermalDotNet.ThermalPrinter"/> class.
+		/// </summary>
+		/// <param name='serialPort'>
+		/// Serial port used by printer.
+		/// </param>
 		public ThermalPrinter(SerialPort serialPort)
 		{
 			_constructor(serialPort,_maxPrintingDots,_heatingTime,_heatingInterval);
@@ -154,6 +178,26 @@ namespace ThermalDotNet
 		/// </param>
 		public void WriteLine(string text, byte style)
 		{
+			byte underlineHeight = 0;
+			
+			if (_BitTest(style, 0))
+			{
+				style = _BitClear(style, 0);
+				underlineHeight = 1;
+			}
+			
+			if (_BitTest(style, 7))
+			{
+				style = _BitClear(style, 7);
+				underlineHeight = 2;
+			}
+			
+			if (underlineHeight != 0) {
+				_writeByte(27);
+				_writeByte(45);
+				_writeByte(underlineHeight);
+			}
+			
 			//style on
 			_writeByte(27);
 			_writeByte(33);
@@ -163,9 +207,15 @@ namespace ThermalDotNet
 			WriteLine(text);
 			
 			//style off
+			if (underlineHeight != 0) {
+				_writeByte(27);
+				_writeByte(45);
+				_writeByte(0);
+			}
 			_writeByte(27);
 			_writeByte(33);
 			_writeByte(0);
+			
 		}
 		
 		/// <summary>
@@ -336,7 +386,7 @@ namespace ThermalDotNet
 		/// Prints a horizontal line.
 		/// </summary>
 		/// <param name='length'>
-		/// Line length (in characters).
+		/// Line length (in characters) (max 32).
 		/// </param>
 		public void HorizontalLine(int length)
 		{
@@ -362,21 +412,66 @@ namespace ThermalDotNet
 			System.Threading.Thread.Sleep(50);
 		}
 		
+		/// <summary>
+		/// List of supported barcode types.
+		/// </summary>
 		public enum BarcodeType
 		{
+			/// <summary>
+			/// UPC-A
+			/// </summary>
 			upc_a = 0,
+			/// <summary>
+			/// UPC-E
+			/// </summary>
 			upc_e = 1,
+			/// <summary>
+			/// EAN13
+			/// </summary>
 			ean13 = 2,
+			/// <summary>
+			/// EAN8
+			/// </summary>
 			ean8 = 3,
+			/// <summary>
+			/// CODE 39
+			/// </summary>
 			code39 = 4,
+			/// <summary>
+			/// I25
+			/// </summary>
 			i25 = 5,
+			/// <summary>
+			/// CODEBAR
+			/// </summary>
 			codebar = 6,
+			/// <summary>
+			/// CODE 93
+			/// </summary>
 			code93 = 7,
+			/// <summary>
+			/// CODE 128
+			/// </summary>
 			code128 = 8,
+			/// <summary>
+			/// CODE 11
+			/// </summary>
 			code11 = 9,
+			/// <summary>
+			/// MSI
+			/// </summary>
 			msi = 10
 		}
 		
+		/// <summary>
+		/// Prints the barcode data.
+		/// </summary>
+		/// <param name='type'>
+		/// Type of barcode.
+		/// </param>
+		/// <param name='data'>
+		/// Data to print.
+		/// </param>
 		public void PrintBarcode(BarcodeType type, string data)
 		{
 			byte[] originalBytes;
@@ -455,20 +550,20 @@ namespace ThermalDotNet
 					_writeByte(0);
 				}
 				break;
-			case BarcodeType.code93: //todo: overload this method with a byte array parameter
+			case BarcodeType.code93: //todo: overload PrintBarcode method with a byte array parameter
 				if (data.Length > 1) {
 					_writeByte(29);
 					_writeByte(107);
-					_writeByte(7); //todo: use format 2 (init string :  (0x00 can be a value, too)
+					_writeByte(7); //todo: use format 2 (init string : 29,107,72) (0x00 can be a value, too)
 					_serialPort.Write(outputBytes,0,data.Length);
 					_writeByte(0);
 				}
 				break;
-			case BarcodeType.code128: //todo: overload this method with a byte array parameter
+			case BarcodeType.code128: //todo: overload PrintBarcode method with a byte array parameter
 				if (data.Length > 1) {
 					_writeByte(29);
 					_writeByte(107);
-					_writeByte(8); //todo: use format 2
+					_writeByte(8); //todo: use format 2 (init string : 29,107,73) (0x00 can be a value, too)
 					_serialPort.Write(outputBytes,0,data.Length);
 					_writeByte(0);
 				}
@@ -494,6 +589,12 @@ namespace ThermalDotNet
 			}
 		}
 		
+		/// <summary>
+		/// Selects large barcode mode.
+		/// </summary>
+		/// <param name='large'>
+		/// Large barcode mode.
+		/// </param>
 		public void SetLargeBarcode(bool large)
 		{
 			if (large) {
@@ -507,6 +608,12 @@ namespace ThermalDotNet
 			}
 		}
 		
+		/// <summary>
+		/// Sets the barcode left space.
+		/// </summary>
+		/// <param name='spacingDots'>
+		/// Spacing dots.
+		/// </param>
 		public void SetBarcodeLeftSpace(byte spacingDots)
 		{
 				_writeByte(29);
@@ -514,6 +621,12 @@ namespace ThermalDotNet
 				_writeByte(spacingDots);
 		}
 		
+		/// <summary>
+		/// Prints the image. The image must be 384px wide.
+		/// </summary>
+		/// <param name='fileName'>
+		/// Image file path.
+		/// </param>
 		public void PrintImage(string fileName)
 		{
 			
@@ -525,6 +638,12 @@ namespace ThermalDotNet
 
 		}
 		
+		/// <summary>
+		/// Prints the image. The image must be 384px wide.
+		/// </summary>
+		/// <param name='image'>
+		/// Image to print.
+		/// </param>
 		public void PrintImage(Bitmap image)
 		{
 			int width = image.Width;
@@ -573,7 +692,7 @@ namespace ThermalDotNet
 		/// Sets the printing parameters.
 		/// </summary>
 		/// <param name='maxPrintingDots'>
-		/// Max printing dots (0-255), unit: 8 dots, default: 7 (64 dots)
+		/// Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 (beceause (7+1)*8 = 64 dots)
 		/// </param>
 		/// <param name='heatingTime'>
 		/// Heating time (3-255), unit: 10µs, default: 80 (800µs)
@@ -610,6 +729,12 @@ namespace ThermalDotNet
 			_writeByte(1);
 		}
 		
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="ThermalDotNet.ThermalPrinter"/>.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.String"/> that represents the current <see cref="ThermalDotNet.ThermalPrinter"/>.
+		/// </returns>
 		public override string ToString()
 		{
 			return string.Format("ThermalPrinter:\n\t_serialPort={0},\n\t_maxPrintingDots={1}," +
@@ -618,14 +743,43 @@ namespace ThermalDotNet
 				_heatingTime, _heatingInterval, PictureLineSleepTimeMs, WriteLineSleepTimeMs, Encoding);
 		}
 		
+		/// <summary>
+		/// Returns a printing style.
+		/// </summary>
 		public enum PrintingStyle
 		{
+			/// <summary>
+			/// White on black.
+			/// </summary>
 			Reverse = 1 << 1,
+			/// <summary>
+			/// Updown characters.
+			/// </summary>
 			Updown = 1 << 2,
+			/// <summary>
+			/// Bold characters.
+			/// </summary>
 			Bold = 1 << 3,
+			/// <summary>
+			/// Double height characters.
+			/// </summary>
 			DoubleHeight = 1 << 4,
+			/// <summary>
+			/// Double width characters.
+			/// </summary>
 			DoubleWidth = 1 << 5,
-			DeleteLine = 1 << 6
+			/// <summary>
+			/// Strikes text.
+			/// </summary>
+			DeleteLine = 1 << 6,
+			/// <summary>
+			/// Thin underline.
+			/// </summary>
+			Underline = 1 << 0,
+			/// <summary>
+			/// Thick underline.
+			/// </summary>
+			ThickUnderline = 1 << 7
 		}
 		
 		/// <summary>
@@ -663,6 +817,39 @@ namespace ThermalDotNet
 					break;				
 			}
 		}
+		
+		/// <summary>
+        /// Tests the value of a given bit.
+        /// </summary>
+        /// <param name="valueToTest">The value to test</param>
+        /// <param name="testBit">The bit number to test</param>
+        /// <returns></returns>
+        static private bool _BitTest(byte valueToTest, int testBit)
+        {
+            return ((valueToTest & (byte)(1 << testBit)) == (byte)(1 << testBit));
+        }
+		
+		/// <summary>
+        /// Return the given value with its n bit set.
+        /// </summary>
+        /// <param name="originalValue">The value to return</param>
+        /// <param name="bit">The bit number to set</param>
+        /// <returns></returns>
+        static private byte _BitSet(byte originalValue, byte bit)
+        {
+            return originalValue |= (byte)((byte)1 << bit);
+        }
+
+        /// <summary>
+        /// Return the given value with its n bit cleared.
+        /// </summary>
+        /// <param name="originalValue">The value to return</param>
+        /// <param name="bit">The bit number to clear</param>
+        /// <returns></returns>
+        static private byte _BitClear(byte originalValue, int bit)
+        {
+            return originalValue &= (byte)(~(1 << bit));
+        }  
 	}
 }
 

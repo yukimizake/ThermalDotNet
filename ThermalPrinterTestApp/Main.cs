@@ -115,29 +115,33 @@ namespace ThermalPrinterTestApp
 			printer.WakeUp();
 			Console.WriteLine(printer.ToString());
 		
-			TestReceipt(printer);
+			//TestReceipt(printer);
 			
-			System.Threading.Thread.Sleep(5000);
-			printer.SetBarcodeLeftSpace(25);
-			TestBarcode(printer);
+			//System.Threading.Thread.Sleep(5000);
+			//printer.SetBarcodeLeftSpace(25);
+			//TestBarcode(printer);
 			
-			System.Threading.Thread.Sleep(5000);
-			TestImage(printer);
+			//System.Threading.Thread.Sleep(5000);
+			//TestImage(printer);
 
-            System.Threading.Thread.Sleep(5000);
-			printer.SetLineSpacing(10);
+            //System.Threading.Thread.Sleep(5000);
+			printer.WriteLineSleepTimeMs = 200;
 			printer.WriteLine("Default style");
 			printer.WriteLine("PrintingStyle.Bold",ThermalPrinter.PrintingStyle.Bold);
 			printer.WriteLine("PrintingStyle.DeleteLine",ThermalPrinter.PrintingStyle.DeleteLine);
 			printer.WriteLine("PrintingStyle.DoubleHeight",ThermalPrinter.PrintingStyle.DoubleHeight);
 			printer.WriteLine("PrintingStyle.DoubleWidth",ThermalPrinter.PrintingStyle.DoubleWidth);
 			printer.WriteLine("PrintingStyle.Reverse",ThermalPrinter.PrintingStyle.Reverse);
+			printer.WriteLine("PrintingStyle.Underline",ThermalPrinter.PrintingStyle.Underline);
 			printer.WriteLine("PrintingStyle.Updown",ThermalPrinter.PrintingStyle.Updown);
+			printer.WriteLine("PrintingStyle.ThickUnderline",ThermalPrinter.PrintingStyle.ThickUnderline);
+			printer.SetAlignCenter();
 			printer.WriteLine("BIG TEXT!",((byte)ThermalPrinter.PrintingStyle.Bold +
 				(byte)ThermalPrinter.PrintingStyle.DoubleHeight +
 				(byte)ThermalPrinter.PrintingStyle.DoubleWidth));
-			
-			printer.LineFeed();
+			printer.SetAlignLeft();
+			printer.WriteLine("Default style again");
+			printer.LineFeed(3);
 			printer.Sleep();
 			Console.WriteLine("Printer is now offline.");
 			printerPort.Close();
