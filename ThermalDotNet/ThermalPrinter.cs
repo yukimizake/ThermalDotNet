@@ -328,7 +328,7 @@ namespace ThermalDotNet
 		/// <param name='columns'>
 		/// Number of columns.
 		/// </param>
-		public void Ident(byte columns)
+		public void Indent(byte columns)
 		{
 			if (columns < 0 || columns > 31) {
 				columns = 0;

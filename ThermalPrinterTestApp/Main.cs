@@ -150,14 +150,14 @@ namespace ThermalPrinterTestApp
 		static void CashRegister(ThermalPrinter printer, string item, int price)
 		{
 			printer.Reset();
-			printer.Ident(0);
+			printer.Indent(0);
 			
 			if (item.Length > 24) {
 				item = item.Substring(0,23)+".";
 			}
 			
 			printer.WriteToBuffer(item.ToUpper());
-			printer.Ident(25);
+			printer.Indent(25);
 			string sPrice = String.Format("{0:0.00}",(double)price/100);
 	
 			sPrice = sPrice.PadLeft(7);

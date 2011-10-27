@@ -261,7 +261,7 @@
             Number of lines to feed.
             </param>
         </member>
-        <member name="M:ThermalDotNet.ThermalPrinter.Ident(System.Byte)">
+        <member name="M:ThermalDotNet.ThermalPrinter.Indent(System.Byte)">
             <summary>
             Idents the text.
             </summary>
