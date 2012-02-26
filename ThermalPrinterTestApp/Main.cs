@@ -79,10 +79,12 @@ namespace ThermalPrinterTestApp
 
 		static void TestImage(ThermalPrinter printer)
 		{
+			printer.WriteLine("Test image:");
 			Bitmap img = new Bitmap("../../../mono-logo.png");
 			printer.LineFeed();
 			printer.PrintImage(img);
 			printer.LineFeed();
+			printer.WriteLine("Image OK");
 		}
 		
 		public static void Main(string[] args)
@@ -111,7 +113,7 @@ namespace ThermalPrinterTestApp
 			}
 			
 			//Printer init
-			ThermalPrinter printer = new ThermalPrinter(printerPort);
+			ThermalPrinter printer = new ThermalPrinter(printerPort,2,180,2);
 			printer.WakeUp();
 			Console.WriteLine(printer.ToString());
 		
@@ -125,6 +127,7 @@ namespace ThermalPrinterTestApp
 			//TestImage(printer);
 
             //System.Threading.Thread.Sleep(5000);
+			
 			printer.WriteLineSleepTimeMs = 200;
 			printer.WriteLine("Default style");
 			printer.WriteLine("PrintingStyle.Bold",ThermalPrinter.PrintingStyle.Bold);
@@ -141,6 +144,7 @@ namespace ThermalPrinterTestApp
 				(byte)ThermalPrinter.PrintingStyle.DoubleWidth));
 			printer.SetAlignLeft();
 			printer.WriteLine("Default style again");
+			
 			printer.LineFeed(3);
 			printer.Sleep();
 			Console.WriteLine("Printer is now offline.");

@@ -37,7 +37,7 @@ namespace ThermalDotNet
 		/// Serial port used by printer.
 		/// </param>
 		/// <param name='maxPrintingDots'>
-		/// Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 (beceause (7+1)*8 = 64 dots)
+		/// Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 ((7+1)*8 = 64 dots)
 		/// </param>
 		/// <param name='heatingTime'>
 		/// Heating time (3-255), unit: 10µs, default: 80 (800µs)
@@ -672,13 +672,9 @@ namespace ThermalDotNet
 			_writeByte(18);
 			_writeByte(118);
 			
-			if (height == 0) {
-				_writeByte((byte)height); 	//height LSB
-				_writeByte(0); 				//heignt MSB
-			} else {
-				_writeByte((byte)(height-((height / 256)*256))); 	//height LSB
-				_writeByte((byte)(height / 256)); 					//height MSB
-			}
+			_writeByte((byte)(height & 255)); 	//height LSB
+			_writeByte((byte)(height >> 8)); 	//height MSB
+
 			
 			for (int y = 0; y < height; y++) {
 				System.Threading.Thread.Sleep(PictureLineSleepTimeMs);

@@ -18,7 +18,7 @@
             Serial port used by printer.
             </param>
             <param name="maxPrintingDots">
-            Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 (beceause (7+1)*8 = 64 dots)
+            Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 ((7+1)*8 = 64 dots)
             </param>
             <param name="heatingTime">
             Heating time (3-255), unit: 10µs, default: 80 (800µs)
