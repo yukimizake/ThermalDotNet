@@ -1,3 +1,5 @@
+// Test app for ThermalDotNet library
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;

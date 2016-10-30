@@ -1,0 +1,419 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>/Users/oryx/Projects/ThermalDotNet/ThermalDotNet/bin/Release/ThermalDotNet</name>
+    </assembly>
+    <members>
+        <member name="T:ThermalDotNet.ThermalPrinter">
+            <summary>
+            ESP/POS serial thermal printer library.
+            https://github.com/yukimizake/ThermalDotNet
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.#ctor(System.IO.Ports.SerialPort,System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ThermalDotNet.ThermalPrinter" /> class.
+            </summary>
+            <param name="serialPort">
+            Serial port used by printer.
+            </param>
+            <param name="maxPrintingDots">
+            Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 ((7+1)*8 = 64 dots)
+            </param>
+            <param name="heatingTime">
+            Heating time (3-255), unit: 10µs, default: 80 (800µs)
+            </param>
+            <param name="heatingInterval">
+            Heating interval (0-255), unit: 10µs, default: 2 (20µs)
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.#ctor(System.IO.Ports.SerialPort)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ThermalDotNet.ThermalPrinter" /> class.
+            </summary>
+            <param name="serialPort">
+            Serial port used by printer.
+            </param>
+        </member>
+        <member name="T:ThermalDotNet.ThermalPrinter.BarcodeType">
+            <summary>
+            List of supported barcode types.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.upc_a">
+            <summary>
+            UPC-A
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.upc_e">
+            <summary>
+            UPC-E
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.ean13">
+            <summary>
+            EAN13
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.ean8">
+            <summary>
+            EAN8
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.code39">
+            <summary>
+            CODE 39
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.i25">
+            <summary>
+            I25
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.codebar">
+            <summary>
+            CODEBAR
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.code93">
+            <summary>
+            CODE 93
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.code128">
+            <summary>
+            CODE 128
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.code11">
+            <summary>
+            CODE 11
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.BarcodeType.msi">
+            <summary>
+            MSI
+            </summary>
+        </member>
+        <member name="T:ThermalDotNet.ThermalPrinter.PrintingStyle">
+            <summary>
+            Returns a printing style.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.Reverse">
+            <summary>
+            White on black.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.Updown">
+            <summary>
+            Updown characters.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.Bold">
+            <summary>
+            Bold characters.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.DoubleHeight">
+            <summary>
+            Double height characters.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.DoubleWidth">
+            <summary>
+            Double width characters.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.DeleteLine">
+            <summary>
+            Strikes text.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.Underline">
+            <summary>
+            Thin underline.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PrintingStyle.ThickUnderline">
+            <summary>
+            Thick underline.
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.PictureLineSleepTimeMs">
+            <summary>
+            Delay between two picture lines. (in ms)
+            </summary>
+        </member>
+        <member name="F:ThermalDotNet.ThermalPrinter.WriteLineSleepTimeMs">
+            <summary>
+            Delay between two text lines. (in ms)
+            </summary>
+        </member>
+        <member name="P:ThermalDotNet.ThermalPrinter.Encoding">
+            <summary>
+            Current encoding used by the printer.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteLine(System.String)">
+            <summary>
+            Prints the line of text.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteToBuffer(System.String)">
+            <summary>
+            Sends the text to the printer buffer. Does not print until a line feed (0x10) is sent.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteLine_Invert(System.String)">
+            <summary>
+            Prints the line of text, white on black.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteLine_Big(System.String)">
+            <summary>
+            Prints the line of text, double size.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteLine(System.String,ThermalDotNet.ThermalPrinter.PrintingStyle)">
+            <summary>
+            Prints the line of text.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+            <param name="style">
+            Style of the text.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteLine(System.String,System.Byte)">
+            <summary>
+            Prints the line of text.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+            <param name="style">
+            Style of the text. Can be the sum of PrintingStyle enums.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WriteLine_Bold(System.String)">
+            <summary>
+            Prints the line of text in bold.
+            </summary>
+            <param name="text">
+            Text to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.BoldOn">
+            <summary>
+            Sets bold mode on.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.BoldOff">
+            <summary>
+            Sets bold mode off.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WhiteOnBlackOn">
+            <summary>
+            Sets white on black mode on.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WhiteOnBlackOff">
+            <summary>
+            Sets white on black mode off.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetSize(System.Boolean,System.Boolean)">
+            <summary>
+            Sets the text size.
+            </summary>
+            <param name="doubleWidth">
+            Double width
+            </param>
+            <param name="doubleHeight">
+            Double height
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.LineFeed">
+            <summary>
+            Prints the contents of the buffer and feeds one line.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.LineFeed(System.Byte)">
+            <summary>
+            Prints the contents of the buffer and feeds n lines.
+            </summary>
+            <param name="lines">
+            Number of lines to feed.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.Indent(System.Byte)">
+            <summary>
+            Idents the text.
+            </summary>
+            <param name="columns">
+            Number of columns.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetLineSpacing(System.Byte)">
+            <summary>
+            Sets the line spacing.
+            </summary>
+            <param name="lineSpacing">
+            Line spacing (in dots), default value: 32 dots.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetAlignLeft">
+            <summary>
+            Aligns the text to the left.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetAlignCenter">
+            <summary>
+            Centers the text.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetAlignRight">
+            <summary>
+            Aligns the text to the right.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.HorizontalLine(System.Int32)">
+            <summary>
+            Prints a horizontal line.
+            </summary>
+            <param name="length">
+            Line length (in characters) (max 32).
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.Reset">
+            <summary>
+            Resets the printer.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.PrintBarcode(ThermalDotNet.ThermalPrinter.BarcodeType,System.String)">
+            <summary>
+            Prints the barcode data.
+            </summary>
+            <param name="type">
+            Type of barcode.
+            </param>
+            <param name="data">
+            Data to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetLargeBarcode(System.Boolean)">
+            <summary>
+            Selects large barcode mode.
+            </summary>
+            <param name="large">
+            Large barcode mode.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetBarcodeLeftSpace(System.Byte)">
+            <summary>
+            Sets the barcode left space.
+            </summary>
+            <param name="spacingDots">
+            Spacing dots.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.PrintImage(System.String)">
+            <summary>
+            Prints the image. The image must be 384px wide.
+            </summary>
+            <param name="fileName">
+            Image file path.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.PrintImage(System.Drawing.Bitmap)">
+            <summary>
+            Prints the image. The image must be 384px wide.
+            </summary>
+            <param name="image">
+            Image to print.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.SetPrintingParameters(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Sets the printing parameters.
+            </summary>
+            <param name="maxPrintingDots">
+            Max printing dots (0-255), unit: (n+1)*8 dots, default: 7 (beceause (7+1)*8 = 64 dots)
+            </param>
+            <param name="heatingTime">
+            Heating time (3-255), unit: 10µs, default: 80 (800µs)
+            </param>
+            <param name="heatingInterval">
+            Heating interval (0-255), unit: 10µs, default: 2 (20µs)
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.Sleep">
+            <summary>
+            Sets the printer offine.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.WakeUp">
+            <summary>
+            Sets the printer online.
+            </summary>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:ThermalDotNet.ThermalPrinter" />.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents the current <see cref="T:ThermalDotNet.ThermalPrinter" />.
+            </returns>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter.FeedDots(System.Byte)">
+            <summary>
+            Prints the contents of the buffer and feeds n dots.
+            </summary>
+            <param name="dotsToFeed">
+            Number of dots to feed.
+            </param>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter._BitTest(System.Byte,System.Int32)">
+            <summary>
+            Tests the value of a given bit.
+            </summary>
+            <param name="valueToTest">The value to test</param>
+            <param name="testBit">The bit number to test</param>
+            <returns>
+            </returns>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter._BitSet(System.Byte,System.Byte)">
+            <summary>
+            Return the given value with its n bit set.
+            </summary>
+            <param name="originalValue">The value to return</param>
+            <param name="bit">The bit number to set</param>
+            <returns>
+            </returns>
+        </member>
+        <member name="M:ThermalDotNet.ThermalPrinter._BitClear(System.Byte,System.Int32)">
+            <summary>
+            Return the given value with its n bit cleared.
+            </summary>
+            <param name="originalValue">The value to return</param>
+            <param name="bit">The bit number to clear</param>
+            <returns>
+            </returns>
+        </member>
+    </members>
+</doc>

@@ -22,3 +22,11 @@ ThermalDotNet/bin/Debug/ThermalDotNet.dll
 ThermalPrinterTestApp/bin/Release/ThermalDotNet.dll
 
 ThermalPrinterTestApp/bin/Release/ThermalPrinterTestApp.exe
+
+ThermalDotNet/obj/Release/ThermalDotNet.csproj.FilesWrittenAbsolute.txt
+
+ThermalDotNet/obj/Release/ThermalDotNet.dll
+
+ThermalPrinterTestApp/obj/x86/Release/ThermalPrinterTestApp.exe
+
+ThermalPrinterTestApp/obj/x86/Release/ThermalPrinterTestApp.csproj.FilesWrittenAbsolute.txt
